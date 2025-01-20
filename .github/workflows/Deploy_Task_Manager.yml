@@ -22,7 +22,7 @@ jobs:
               run: mkdir -p ~/.ssh
 
             - name: Add host to list of known hosts
-              run: ssh-keyscan -H <3.73.178.155> > ~/.ssh/known_hosts
+              run: ssh-keyscan -H 3.73.178.155 > ~/.ssh/known_hosts
 
             - name: Set up Ansible
               run: |
@@ -38,5 +38,5 @@ jobs:
 
             - name: Run Ansible playbook
               run: |
-                ansible-playbook -u ubuntu -i <3.73.178.155>, --private-key ~/.ssh/id_rsa task_manager_deploy.yml
+                ansible-playbook -u ubuntu -i 3.73.178.155, --private-key ~/.ssh/id_rsa task_manager_deploy.yml
 
