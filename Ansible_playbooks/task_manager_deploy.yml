@@ -1,0 +1,51 @@
+- name: Deploy Task Manager API to EC2
+  hosts: all
+  become: true
+  tasks:
+    - name: Update and upgrade system
+      apt:
+        update_cache: yes
+        upgrade: dist
+      tags: update
+    - name: Install dependencies
+      apt:
+        name:
+          - docker.io
+          - python3-pip
+        state: present
+      tags: dependencies
+    - name: Install Docker Compose
+      pip:
+        name: docker-compose
+      tags: docker-compose
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+      tags: docker
+    - name: Pull task manager app image
+      community.docker.docker_image:
+        name: "karabasas/my-api-app:latest"
+        source: pull
+      tags: pull_image
+    - name: Stop and remove any existing Task manager container
+      community.docker.docker_container:
+        name: my-api-app
+        state: absent
+      ignore_errors: true
+      tags: cleanup
+    - name: Run Task Manager container
+      community.docker.docker_container:
+        name: task-manager
+        image: "karabasas/my-api-app:latest"
+        state: started
+        restart_policy: always
+        published_ports:
+          - 5000:5000
+      tags: run_container
+    - name: Confirm Task Manager is running
+      shell: docker ps | grep my-api-app
+      register: container_status
+      failed_when: "'my-api-app' not in container_status.stdout"
+      tags: verify
