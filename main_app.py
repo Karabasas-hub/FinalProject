@@ -10,8 +10,7 @@ app = Flask(__name__)
 # Inicijuojame DynamoDB client'ą
 dynamodb = boto3.resource(
     'dynamodb', 
-    region_name='eu-central-1',
-    endpoint_url = 'http://localhost:8000'    
+    region_name='eu-central-1',   
     )
 
 table = dynamodb.Table('Tasks')
