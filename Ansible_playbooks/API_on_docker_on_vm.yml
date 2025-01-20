@@ -1,0 +1,33 @@
+- name: Pull Docker image
+  hosts: all
+  become: true
+  tasks:
+    # paleidžiam dockerį
+    - name: Start docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+    # Pullinam API appso image'ą iš dockerio repo
+    - name: Pull the API app Docker image
+      command: docker pull karabasas/my-api-app
+      register: pull_result
+    # sustabdom ir pašalinam betkokį veikiantį konteinerį su veikiančiu API
+    - name: Remove existing API running containers
+      docker_container:
+        name: my-api-app
+        state: absent
+    # paleidžiam API konteinerį
+    - name: Start API app Docker container
+      docker_container:
+        name: my-api-app
+        image: karabasas/my-api-app:latest
+        state: started
+        ports:
+          - "5000:5000" # mapinam ec2 instance 5000 portą su konteinerio 5000 portu
+        restart_policy: always
+        restart: true
+    # išsivedam ar sėkmingai pavyko paleisti konteinerį
+    - name: Display pull result
+      debug:
+        var: pull_result.stdout

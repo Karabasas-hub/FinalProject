@@ -1,0 +1,53 @@
+name: Setup DOcker on VM with Ansible
+
+on:
+    workflow_dispatch:
+        inputs:
+            environment:
+                type: choice
+                description: Ready, set GO!
+                options:
+                    - GOGOGOGO
+                default: just go
+
+jobs:
+    install_docker:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./Ansible_playbooks
+        
+        steps:
+            # įsitikinam, kad galim pasiekti playbooką
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Create SSH directory
+              run: mkdir -p ~/.ssh
+
+            - name: Add host to known hosts
+              run: ssh-keyscan -H 3.73.178.155 > ~/.ssh/known_hosts
+
+            - name: Check and install Ansible
+              run: |
+                if ! command -v ansible &> /dev/null; then
+                  echo "Ansible not found. Installing..."
+                  sudo apt-get update && sudo apt-get install -y ansible
+                else
+                  echo "Ansible is already installed"
+                fi
+
+            - name: Ensure everything is up to date
+              run: |
+                sudo dpkg --configure -a
+                sudo apt-get update
+                sudo apt-get -f install
+
+            - name: Setup SSH key for authentication with AWS VM
+              run: |
+                mkdir -p ~/.ssh
+                echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
+                chmod 600 ~/.ssh/id_rsa
+
+            - name: Run Ansible playbook to install Docker
+              run: ansible-playbook -u ubuntu -i 3.73.178.155, --private-key ~/.ssh/id_rsa docker_on_vm.yml

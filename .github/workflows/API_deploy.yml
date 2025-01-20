@@ -1,0 +1,29 @@
+name: Deploy API app on VM with Ansible
+
+on: 
+    workflow_dispatch:
+        inputs:
+            environment:
+                type: choice
+                description: READY?? SET?? GO!!
+                options:
+                    - GOGOx2
+                default: Going
+    workflow_run:
+        workflows:
+            - Setup DOcker on VM with Ansible
+        types:
+            - completed
+
+jobs:
+    install-docker:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./Ansible_playbooks
+        steps:
+            
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: 
