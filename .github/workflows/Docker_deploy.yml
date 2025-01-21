@@ -46,7 +46,19 @@ jobs:
                 echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
                 chmod 600 ~/.ssh/id_rsa
 
+            - name: Set AWS credentials
+              run: |
+                echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ~/.bash_profile
+                echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ~/.bash_profile
+                echo "AWS_REGION=eu-central-1" >> ~/.bash_profile
+                source ~/.bash_profile
+
             - name: Run Ansible playbook to install Docker
-              run: ansible-playbook -u ubuntu -i ${{ github.event.inputs.vm_ip }}, --private-key ~/.ssh/id_rsa docker_on_vm.yml
+              run: |
+                ansible-playbook -u ubuntu -i ${{ github.event.inputs.vm_ip }}, --private-key ~/.ssh/id_rsa docker_on_vm.yml
+              env:
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_REGION: eu-central-1
 
             
