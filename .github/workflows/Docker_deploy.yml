@@ -47,12 +47,14 @@ jobs:
                 chmod 600 ~/.ssh/id_rsa
 
             - name: Save VM IP for subsequent workflows
-              run: echo ${{ github.event.inputs.vm_ip }} > vm_ip.txt
+              run: |
+                echo ${{ github.event.inputs.vm_ip }} > vm_ip.txt
+                cat vm_ip.txt
 
             - name: Upload VM IP artifact
               uses: actions/upload-artifact@v3
               with:
-                  name: vm-ip
+                  name: vm_ip
                   path: vm_ip.txt
 
             - name: Run Ansible playbook to install Docker
