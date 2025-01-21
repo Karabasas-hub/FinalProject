@@ -54,8 +54,8 @@ jobs:
             - name: Upload VM IP artifact
               uses: actions/upload-artifact@v3
               with:
-                  name: vm_ip
-                  path: ./Ansible_playbooks/vm_ip.txt
+                  name: vm-ip
+                  
 
             - name: Run Ansible playbook to install Docker
               run: ansible-playbook -u ubuntu -i ${{ github.event.inputs.vm_ip }}, --private-key ~/.ssh/id_rsa docker_on_vm.yml
