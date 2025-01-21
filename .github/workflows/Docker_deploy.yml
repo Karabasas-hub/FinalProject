@@ -3,12 +3,10 @@ name: Setup DOcker on VM with Ansible
 on:
     workflow_dispatch:
         inputs:
-            environment:
-                type: choice
-                description: Ready, set GO!
-                options:
-                    - GOGOGOGO
-                default: just go
+            vm_ip:
+                description: Enter the IP of the VM
+                required: true
+                default: "your.vm.ip.here"
 
 jobs:
     install_docker:
