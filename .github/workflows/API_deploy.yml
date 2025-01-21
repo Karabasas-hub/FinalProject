@@ -29,8 +29,8 @@ jobs:
             - name: Download VM IP artifact from previous workflow
               uses: actions/download-artifact@v3
               with:
-                  name: vm_ip
-                  path: ./Ansible_playbook
+                  name: vm-ip
+                 
 
             - name: Verify VM IP artifact
               run: |
