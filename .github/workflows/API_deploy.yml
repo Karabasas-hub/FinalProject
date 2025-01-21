@@ -29,7 +29,7 @@ jobs:
             - name: Download VM IP artifact from previous workflow
               uses: actions/download-artifact@v3
               with:
-                  name: vm-ip
+                  name: vm_ip
 
             - name: Read VM IP
               id: read_ip
