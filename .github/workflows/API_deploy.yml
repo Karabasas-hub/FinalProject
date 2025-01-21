@@ -16,7 +16,7 @@ on:
             - completed
 
 jobs:
-    install-docker:
+    install_api_app:
         runs-on: ubuntu-latest
         defaults:
             run:
@@ -26,11 +26,21 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
 
+            - name: Download VM IP artifact from previous workflow
+              uses: actions/download-artifact@v3
+              with:
+                  name: vm-ip
+              if: ${{ inputs.vm_ip == '' }}
+
+            - name: Set VM IP from input (if provided)
+              run: echo "VM_IP=${{ github.event.inputs.vm_ip }}" >> $GITHUB_ENV
+              if: ${{ inputs.vm_ip != '' }}
+
             - name: Create SSH directory
               run: mkdir -p ~/.ssh
 
             - name: Add host to known hosts
-              run: ssh-keyscan -H 3.66.209.190 > ~/.ssh/known_hosts
+              run: ssh-keyscan -H ${{ env.VM_IP }} > ~/.ssh/known_hosts
 
             - name: Check and install Ansible
               run: |
@@ -54,4 +64,4 @@ jobs:
                 chmod 600 ~/.ssh/id_rsa
 
             - name: Run the playbook to deploy the API
-              run: ansible-playbook -u ubuntu -i 3.66.209.190, --private-key ~/.ssh/id_rsa API_on_docker_on_vm.yml
+              run: ansible-playbook -u ubuntu -i ${{ env.VM_IP }}, --private-key ~/.ssh/id_rsa API_on_docker_on_vm.yml
