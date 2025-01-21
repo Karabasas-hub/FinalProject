@@ -25,7 +25,7 @@ jobs:
               run: mkdir -p ~/.ssh
 
             - name: Add host to known hosts
-              run: ssh-keyscan -H 3.73.178.155 > ~/.ssh/known_hosts
+              run: ssh-keyscan -H 3.66.209.190 > ~/.ssh/known_hosts
 
             - name: Check and install Ansible
               run: |
@@ -49,4 +49,4 @@ jobs:
                 chmod 600 ~/.ssh/id_rsa
 
             - name: Run Ansible playbook to install Docker
-              run: ansible-playbook -u ubuntu -i 3.73.178.155, --private-key ~/.ssh/id_rsa docker_on_vm.yml
+              run: ansible-playbook -u ubuntu -i 3.66.209.190, --private-key ~/.ssh/id_rsa docker_on_vm.yml
