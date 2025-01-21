@@ -46,9 +46,6 @@ jobs:
                 echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
                 chmod 600 ~/.ssh/id_rsa
 
-            - name: Run Ansible playbook to install Docker
-              run: ansible-playbook -u ubuntu -i ${{ github.event.inputs.vm_ip }}, --private-key ~/.ssh/id_rsa docker_on_vm.yml
-
             - name: Save VM IP for subsequent workflows
               run: echo ${{ github.event.inputs.vm_ip }} > vm_ip.txt
 
@@ -57,3 +54,8 @@ jobs:
               with:
                   name: vm-ip
                   path: vm_ip.txt
+
+            - name: Run Ansible playbook to install Docker
+              run: ansible-playbook -u ubuntu -i ${{ github.event.inputs.vm_ip }}, --private-key ~/.ssh/id_rsa docker_on_vm.yml
+
+            
