@@ -48,14 +48,14 @@ jobs:
 
             - name: Save VM IP for subsequent workflows
               run: |
-                echo ${{ github.event.inputs.vm_ip }} > ./vm_ip.txt
+                echo ${{ github.event.inputs.vm_ip }} > vm_ip.txt
                 cat vm_ip.txt
 
             - name: Upload VM IP artifact
               uses: actions/upload-artifact@v3
               with:
                   name: vm_ip
-                  path: ./vm_ip.txt
+                  path: ./Ansible_playbooks/vm_ip.txt
 
             - name: Run Ansible playbook to install Docker
               run: ansible-playbook -u ubuntu -i ${{ github.event.inputs.vm_ip }}, --private-key ~/.ssh/id_rsa docker_on_vm.yml
