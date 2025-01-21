@@ -23,7 +23,7 @@ jobs:
               run: mkdir -p ~/.ssh
 
             - name: Add host to known hosts
-              run: ssh-keyscan -H 3.66.209.190 > ~/.ssh/known_hosts
+              run: ssh-keyscan -H ${{ github.event.inputs.vm_ip }} > ~/.ssh/known_hosts
 
             - name: Check and install Ansible
               run: |
@@ -48,3 +48,12 @@ jobs:
 
             - name: Run Ansible playbook to install Docker
               run: ansible-playbook -u ubuntu -i ${{ github.event.inputs.vm_ip }}, --private-key ~/.ssh/id_rsa docker_on_vm.yml
+
+            - name: Save VM IP for subsequent workflows
+              run: echo ${{ github.event.inputs.vm_ip }} > vm_ip.txt
+
+            - name: Upload VM IP artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: vm-ip
+                  path: vm_ip.txt
