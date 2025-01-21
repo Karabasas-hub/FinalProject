@@ -30,11 +30,12 @@ jobs:
               uses: actions/download-artifact@v3
               with:
                   name: vm-ip
-              if: ${{ inputs.vm_ip == '' }}
 
-            - name: Set VM IP from input (if provided)
-              run: echo "VM_IP=${{ github.event.inputs.vm_ip }}" >> $GITHUB_ENV
-              if: ${{ inputs.vm_ip != '' }}
+            - name: Read VM IP
+              id: read_ip
+              run: |
+                VM_IP=$(cat vm_ip.txt)
+                echo "VM_IP=$VM_IP" >> $GITHUB_ENV
 
             - name: Create SSH directory
               run: mkdir -p ~/.ssh
