@@ -31,6 +31,10 @@ jobs:
               with:
                   name: vm_ip
 
+            - name: Verify VM IP artifact
+              run: |
+                cat vm_ip.txt
+
             - name: Read VM IP
               id: read_ip
               run: |
