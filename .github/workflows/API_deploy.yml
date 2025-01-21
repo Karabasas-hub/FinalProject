@@ -30,6 +30,7 @@ jobs:
               uses: actions/download-artifact@v3
               with:
                   name: vm_ip
+                  path: ./Ansible_playbooks
 
             - name: Verify VM IP artifact
               run: |
