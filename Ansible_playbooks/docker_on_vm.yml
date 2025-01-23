@@ -67,3 +67,18 @@
     - name: Print out docker version
       debug:
         msg: "Docker installed successfully. {{docker_version.stdout }}"
+
+    - name: Perduodam AWS kredencialus konteineriams
+      lineinfile:
+        path: /etc/environment
+        regexp: '^AWS_'
+        insertafter: EOF
+        line: "{{ item }}"
+        state: present
+    with_items:
+      - "AWS_ACCESS_KEY_ID={{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      - "AWS_SECRET_ACCESS_KEY={{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+      - "AWS_REGION={{ lookup('env', 'AWS_REGION') }}"
+
+    - name: Paleidžiam source komandą
+      shell: source /etc/environment
