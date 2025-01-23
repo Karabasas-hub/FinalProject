@@ -1,4 +1,4 @@
-- name: Pull Docker image
+- name: Build and deploy API app
   hosts: all
   become: true
   tasks:
@@ -8,15 +8,27 @@
         name: docker
         state: started
         enabled: true
-    # Pullinam API appso image'ą iš dockerio repo
-    - name: Pull the API app Docker image
-      command: docker pull karabasas/my-api-app
-      register: pull_result
+        
+    # nukopijuojam instaliacijos failus į vm'ą
+    - name: Copy required files from local machine to ec2
+      ansible.builtin.copy:
+        src: ./
+        dest: /home/ubuntu/api_app/
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    # Pagaminam dockerio image ant ec2
+    - name: Build the docker image of the app
+      command: docker build -t karabasas/my-api-app:latest /home/ubuntu/api_app
+      register: build_result
+      
     # sustabdom ir pašalinam betkokį veikiantį konteinerį su veikiančiu API
     - name: Remove existing API running containers
       docker_container:
         name: my-api-app
         state: absent
+        
     # paleidžiam API konteinerį
     - name: Start API app Docker container
       docker_container:
@@ -31,6 +43,7 @@
           AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
           AWS_REGION: "{{ lookup('env', 'AWS_REGION') }}"
         restart: true
+        
     # išsivedam ar sėkmingai pavyko paleisti konteinerį
     - name: Display pull result
       debug:
