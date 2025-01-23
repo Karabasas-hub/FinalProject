@@ -12,7 +12,7 @@
     # nukopijuojam instaliacijos failus į vm'ą
     - name: Copy required files from local machine to ec2
       ansible.builtin.copy:
-        src: ../
+        src: ./
         dest: /home/ubuntu/api_app/
         owner: ubuntu
         group: ubuntu
