@@ -14,9 +14,9 @@
       ansible.builtin.synchronize:
         src: ../
         dest: /home/ubuntu/api_app/
-        rsync_opts:
-          - "--verbose"
-          - "--progress"
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
 
     # Pagaminam dockerio image ant ec2
     - name: Build the docker image of the app
