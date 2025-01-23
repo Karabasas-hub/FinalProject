@@ -11,12 +11,12 @@
         
     # nukopijuojam instaliacijos failus į vm'ą
     - name: Copy required files from local machine to ec2
-      ansible.builtin.copy:
+      ansible.builtin.synchronize:
         src: ../
         dest: /home/ubuntu/api_app/
-        owner: ubuntu
-        group: ubuntu
-        mode: '0755'
+        rsync_opts:
+          - "--verbose"
+          - "--progress"
 
     # Pagaminam dockerio image ant ec2
     - name: Build the docker image of the app
