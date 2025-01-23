@@ -26,8 +26,17 @@
         ports:
           - "5000:5000" # mapinam ec2 instance 5000 portą su konteinerio 5000 portu
         restart_policy: always
+        env:
+          AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+          AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+          AWS_REGION: "{{ lookup('env', 'AWS_REGION') }}"
         restart: true
     # išsivedam ar sėkmingai pavyko paleisti konteinerį
     - name: Display pull result
       debug:
         var: pull_result.stdout
+
+    - name: Display API app container status
+      debug:
+        msg: >
+          The API app container is running with the following details: {{ container_status.stdout }}
