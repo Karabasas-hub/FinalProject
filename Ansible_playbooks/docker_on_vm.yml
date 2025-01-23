@@ -81,4 +81,4 @@
         - "AWS_REGION={{ lookup('env', 'AWS_REGION') }}"
 
     - name: Paleidžiam source komandą
-      shell: . ~/etc/environment
+      shell: . /etc/environment
