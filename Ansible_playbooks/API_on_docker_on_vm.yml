@@ -35,8 +35,3 @@
     - name: Display pull result
       debug:
         var: pull_result.stdout
-
-    - name: Display API app container status
-      debug:
-        msg: >
-          The API app container is running with the following details: {{ container_status.stdout }}
