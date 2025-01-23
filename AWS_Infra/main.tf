@@ -17,7 +17,7 @@ terraform {
 }
 
 resource "aws_dynamodb_table" "Tasks" {
-    name         = "api-tasks-table"
+    name         = "Tasks"
     billing_mode = "PAY_PER_REQUEST"
     hash_key     = "id"
     range_key    = "due_date"
