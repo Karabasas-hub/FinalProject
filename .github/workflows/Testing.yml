@@ -1,0 +1,12 @@
+name: Python Tests
+
+on:
+    workflow_dispatch:
+        inputs:
+            Test_kind:
+                description: Choose what kind of tests
+                required: true
+                default: "Unit"
+jobs:
+    test:
+        runs-on: ubuntu-latest
