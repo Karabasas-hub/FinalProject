@@ -119,7 +119,7 @@ def get_overdue_tasks():
 @app.route('/tasks/<task_id>', methods=['PUT'])
 def update_task(task_id):
     data = request.json
-    update_expression = 'SET'
+    update_expression = 'SET '
     expression_values = {}
     if 'name' in data:
         update_expression += "name = :name, "
@@ -141,7 +141,7 @@ def update_task(task_id):
         UpdateExpression=update_expression,
         ExpressionAttributeValues=expression_values
     )
-    return jsonify({"message:" "Task updated"}), 200
+    return jsonify({"message": "Task updated"}), 200
 
 # Funkcija ištrinti taskui
 @app.route('/tasks/<task_id>', methods=['DELETE'])
