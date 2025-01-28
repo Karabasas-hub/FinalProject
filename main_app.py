@@ -74,12 +74,12 @@ def get_tasks():
 @app.route('/tasks/<task_id>', methods=['GET'])
 def get_task(task_id):
     try:
-        response = table.get_item(Key={'id': task_id})
-        task = response.get('Item', None)
+        response = table.scan(FilterExpression=Attr('id').eq(task_id))
 
-        if not task:
+        if not response['Items']:
             return jsonify({'message': 'Task not found'}), 404
-    
+
+        task = response['Items'][0]
         return jsonify({'task': task}), 200
 
     except Exception as e:
