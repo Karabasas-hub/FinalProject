@@ -146,9 +146,12 @@ def update_task(task_id):
 # Funkcija ištrinti taskui
 @app.route('/tasks/<task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    response = table.delete_item(Key={"id": task_id})
-    return jsonify({"message": "Task deleted"}), 200
+    try:
+        response = table.delete_item(Key={'id':{'S': task_id}})
 
+        return jsonify({"message": "Task deleted"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
