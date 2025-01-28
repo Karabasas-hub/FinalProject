@@ -11,7 +11,7 @@
         
     # nukopijuojam instaliacijos failus į vm'ą
     - name: Copy required files from local machine to ec2
-      ansible.builtin.synchronize:
+      ansible.builtin.copy:
         src: ../
         dest: /home/ubuntu/api_app/
         owner: ubuntu
