@@ -9,10 +9,28 @@
         state: started
         enabled: true
         
-    # nukopijuojam instaliacijos failus į vm'ą
-    - name: Copy required files from local machine to ec2
+    # nukopijuojam main_app.py į vm'ą
+    - name: Copy main_app.py from local machine to ec2
       ansible.builtin.copy:
-        src: ../
+        src: ../main_app.py
+        dest: /home/ubuntu/api_app/
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+      # nukopijuojam Dockerfile į vm'ą
+    - name: Copy Dockerfile from local machine to ec2
+      ansible.builtin.copy:
+        src: ../Dockerfile
+        dest: /home/ubuntu/api_app/
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+      # nukopijuojam requirements.txt į vm'ą
+    - name: Copy requirements.txt from local machine to ec2
+      ansible.builtin.copy:
+        src: ../requirements.txt
         dest: /home/ubuntu/api_app/
         owner: ubuntu
         group: ubuntu
