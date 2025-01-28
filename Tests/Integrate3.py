@@ -1,7 +1,7 @@
 import requests
 import uuid
 
-BASE_URL = "http://<ec2-ip>:5000"
+BASE_URL = "http://63.176.109.247:5000/tasks"
 
 def test_delete_task():
     
@@ -16,8 +16,10 @@ def test_delete_task():
 
     created_task = create_response.json()["task"]
     task_id = created_task["id"]
+    print(task_id)
 
-    delete_url = f"{BASE_URL}/tasks/{task_id}"
+    delete_url = f"{BASE_URL}/{task_id}"
+    print(delete_url)
     response = requests.delete(delete_url)
 
     assert response.status_code == 200

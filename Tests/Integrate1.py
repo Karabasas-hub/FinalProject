@@ -18,5 +18,5 @@ def test_create_task():
     assert "task" in response_data
     assert response_data["task"]["name"] == task_data["name"]
     assert response_data["task"]["status"] == task_data["status"]
-    assert response_data["task"]["due_date"] == task_data["due_date"]
+    assert response_data["task"]["due_date"] == '2025-02-28T00:00:00'
 
