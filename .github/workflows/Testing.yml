@@ -38,17 +38,26 @@ jobs:
                 python -m pip install --upgrade pip
                 pip install -r requirements.txt
 
+            - name: Set BASE_URL environment variable
+              run: echo "BASE_URL=http://${{ github.event.inputs.vm_ip }}:5000/tasks" >> $GITHUB_ENV
+
             - name: Run unit tests
               run: |
-                pytest -k "${{ github.event.inputs.unit_tests }}" --base-url ${{ github.event.inputs.vm_ip }} | tee unit_tests_output.txt
+                pytest -k "${{ github.event.inputs.unit_tests }}" | tee unit_tests_output.txt
+              env:
+                BASE_URL: ${{ env.BASE_URL }}
 
             - name: Run Integration tests
               run: |
-                pytest -k "${{ github.event.inputs.integration_tests }}" --base-url ${{ github.event.inputs.vm_ip }} | tee integration_tests_output.txt
+                pytest -k "${{ github.event.inputs.integration_tests }}" | tee integration_tests_output.txt
+              env:
+                BASE_URL: ${{ env.BASE_URL }}
 
             - name: Run e2e tests
               run: |
-                pytest -k "${{ github.event.inputs.e2e_tests }}" --base-url ${{ github.event.inputs.vm_ip }} | tee e2e_tests_output.txt
+                pytest -k "${{ github.event.inputs.e2e_tests }}" | tee e2e_tests_output.txt
+              env:
+                BASE_URL: ${{ env.BASE_URL }}
 
             - name: Upload results to cloudwatch
               env:
