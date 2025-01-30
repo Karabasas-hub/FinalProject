@@ -10,7 +10,7 @@
         enabled: true
         
     # nukopijuojam main_app.py į vm'ą
-    - name: Copy main_app.py from local machine to ec2
+    - name: Copy main_app.py from repo to ec2
       ansible.builtin.copy:
         src: ../main_app.py
         dest: /home/ubuntu/api_app/
@@ -19,7 +19,7 @@
         mode: '0755'
 
       # nukopijuojam Dockerfile į vm'ą
-    - name: Copy Dockerfile from local machine to ec2
+    - name: Copy Dockerfile from repo to ec2
       ansible.builtin.copy:
         src: ../Dockerfile
         dest: /home/ubuntu/api_app/
@@ -28,7 +28,7 @@
         mode: '0755'
 
       # nukopijuojam requirements.txt į vm'ą
-    - name: Copy requirements.txt from local machine to ec2
+    - name: Copy requirements.txt from repo to ec2
       ansible.builtin.copy:
         src: ../requirements.txt
         dest: /home/ubuntu/api_app/
