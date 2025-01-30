@@ -8,17 +8,17 @@ on:
                 required: true
                 default: 'Testing VM IP here'
             unit_tests:
-                description: 'Comma-separated list of unit tests to run'
+                description: 'Space-separated unit test NAMES(no extension) to run'
                 required: true
-                default: unit_test_1, unit_test_2'
+                default: unit_test_1 unit_test_2'
             integration_tests:
-                description: 'Comma-separated list of integration tests to run'
+                description: 'Space separated integration test NAMES(no extension) to run'
                 required: true
-                default: 'Integration_1, Integration_2'
+                default: 'Integration_1 Integration_2'
             e2e_tests:
-                description: 'Comma-separated list of e2e tests to run'
+                description: 'Space-separated e2e test NAMES(no extension) to run'
                 required: true
-                default: 'e2e_test_1, e2e_test_2'
+                default: 'e2e_test_1 e2e_test_2'
 jobs:
     run-tests:
         runs-on: ubuntu-latest
@@ -43,27 +43,39 @@ jobs:
 
             - name: Run unit tests
               run: |
-                pytest -k "${{ github.event.inputs.unit_tests }}" | tee unit_tests_output.txt
+                pytest -k "$(echo '${{ github.event.inputs.unit_tests }}' | sed 's/,/ or /g')" |  tee unit_tests_output.txt
               env:
                 BASE_URL: ${{ env.BASE_URL }}
 
             - name: Run Integration tests
               run: |
-                pytest -k "${{ github.event.inputs.integration_tests }}" | tee integration_tests_output.txt
+                pytest -k "$(echo '${{ github.event.inputs.integration_tests }}' | sed 's/,/ or /g')" | tee integration_tests_output.txt
               env:
                 BASE_URL: ${{ env.BASE_URL }}
 
             - name: Run e2e tests
               run: |
-                pytest -k "${{ github.event.inputs.e2e_tests }}" | tee e2e_tests_output.txt
+                pytest -k "$(echo '${{ github.event.inputs.e2e_tests }}' | sed 's/,/ or /g')" | tee e2e_tests_output.txt
               env:
                 BASE_URL: ${{ env.BASE_URL }}
 
+            - name: Check and delete existing Log Groups
+              run: |
+                LOG_GROUP_NAME="/github/actions/tests"
+                if aws logs describe-log-groups --log-group-name-prefix "$LOG_GROUP_NAME" | grep -q "$LOG_GROUP_NAME"; then 
+                  echo "Log group exists... Deleting..."
+                  aws logs delete-log-group --log-group-name "$LOG_GROUP_NAME"
+                fi
+              env:
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
             - name: Format log output for proper pipe to Cloudwatch
               run: |
-                echo '[{"timestamp": '$(date +%s000)', "message":"'$(cat unit_tests_output.txt | jq -R -s -c .)'"}]' > unit_tests_log.json
-                echo '[{"timestamp": '$(date +%s000)', "message":"'$(cat integration_tests_output.txt | jq -R -s -c .)'"}]' > integration_tests_log.json
-                echo '[{"timestamp": '$(date +%s000)', "message":"'$(cat e2e_tests_output.txt | jq -R -s -c .)'"}]' > e2e_tests_log.json
+                echo '[{"timestamp": '$(date +%s000)', "message": '$(jq -Rs '.' unit_tests_output.txt)'}]' > unit_tests_log.json
+                echo '[{"timestamp": '$(date +%s000)', "message": '$(jq -Rs '.' integration_tests_output.txt)'}]' > integration_tests_log.json
+                echo '[{"timestamp": '$(date +%s000)', "message": '$(jq -Rs '.' e2e_tests_output.txt)'}]' > e2e_tests_log.json
 
             - name: Upload results to cloudwatch
               env:
