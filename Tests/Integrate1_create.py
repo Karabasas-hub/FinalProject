@@ -1,7 +1,8 @@
 import requests 
 import uuid
+import os
 
-BASE_URL = "http://18.197.246.105:5000/tasks"
+BASE_URL = os.getenv("BASE_URL")
 
 def test_create_task():
 

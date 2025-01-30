@@ -1,6 +1,7 @@
 import requests
+import os
 
-BASE_URL = "http://18.197.246.105:5000"
+BASE_URL = os.getenv("BASE_URL")
 
 def test_create_get_task():
 
