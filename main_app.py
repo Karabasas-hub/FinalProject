@@ -147,11 +147,22 @@ def update_task(task_id):
 @app.route('/tasks/<task_id>', methods=['DELETE'])
 def delete_task(task_id):
     try:
-        response = table.delete_item(Key={'id': task_id})
+        response = table.scan(FilterExpression=Attr('id').eq(task_id))
+        if not response["Items"]:
+            return jsonify({"error": "Task not found"}), 404
+        
+        task = response["Items"][0]
+        due_date = task.get('due_date')
 
-        return jsonify({"message": "Task deleted"}), 200
+        if not due_date:
+            return jsonify({"error": "Task due_date missing"}), 400
+        
+        table.delete_item(Key={'id': task_id, 'due_date': due_date})
+
+        return jsonify({"message": "Task deleted successfully"}), 200
+    
     except Exception as e:
-        print(f"Error for deleting task: {e}")
+        print(f"Error deleting task: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
