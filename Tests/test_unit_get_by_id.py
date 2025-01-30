@@ -19,8 +19,7 @@ def test_get_by_id(client):
             'id': str(uuid.uuid4()),
             'name': 'Test task',
             'status': 'testing',
-            'due_date': '2025-01-31T23:59:59',
-            'created_at': '2025-01-01T00:00:00'
+            'due_date': '2025-01-31',
         }
         with mock.patch.object(table, 'get_item') as mock_get_item,\
             mock.patch.object(table, 'put_item') as mock_put_item:
@@ -38,7 +37,7 @@ def test_get_by_id(client):
             assert "id" in created_task["task"]
             assert created_task["task"]["name"] == "Test task"
             assert created_task["task"]["status"] == "testing"
-            assert created_task["task"]["due_date"] == "2025-01-31T23:59:59"
+            assert created_task["task"]["due_date"] == "2025-01-31T00:00:00"
         
             task_id = created_task["task"]["id"]
             response = client.get(f'/tasks/{task_id}')
@@ -48,4 +47,4 @@ def test_get_by_id(client):
             task = response_data.get('task', {})
             assert task.get('name') == "Test task"
             assert task.get('status') == "testing"
-            assert task.get('due_date') == "2025-01-31T23:59:59"
+            assert task.get('due_date') == "2025-01-31T00:00:00"
