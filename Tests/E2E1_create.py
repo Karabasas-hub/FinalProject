@@ -7,7 +7,7 @@ def test_create_get_task():
 
     create_response = requests.post(f"{BASE_URL}/tasks", json={
         "name": "Test task",
-        "status": "pendingasasasas",
+        "status": "pendingasasasas from E2E1",
         "due_date": "2025-01-30"
     })
 

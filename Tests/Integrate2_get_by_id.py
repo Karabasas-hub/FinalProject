@@ -7,7 +7,7 @@ BASE_URL = os.getenv("BASE_URL")
 def test_get_task():
     task_data = {
         "name": "Retrieve test task",
-        "status": "pending",
+        "status": "pending from Integrate2",
         "due_date": "2025-03-01"
     }
 

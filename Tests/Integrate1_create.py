@@ -8,7 +8,7 @@ def test_create_task():
 
     task_data = {
         "name": f"Test task {uuid.uuid4()}",
-        "status": "pending",
+        "status": "pending from Integrate1",
         "due_date": "2025-02-28"
     }
 

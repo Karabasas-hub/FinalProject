@@ -71,11 +71,12 @@ jobs:
                 AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
-            - name: Format log output for proper pipe to Cloudwatch
+            - name: Format log output for CloudWatch
               run: |
-                echo '[{"timestamp": '$(date +%s000)', "message": '$(jq -Rs '.' unit_tests_output.txt)'}]' > unit_tests_log.json
-                echo '[{"timestamp": '$(date +%s000)', "message": '$(jq -Rs '.' integration_tests_output.txt)'}]' > integration_tests_log.json
-                echo '[{"timestamp": '$(date +%s000)', "message": '$(jq -Rs '.' e2e_tests_output.txt)'}]' > e2e_tests_log.json
+                jq -R -s '[{ "timestamp": '$(date +%s000)', "message": . }]' < unit_tests_output.txt > unit_tests_log.json
+                jq -R -s '[{ "timestamp": '$(date +%s000)', "message": . }]' < integration_tests_output.txt > integration_tests_log.json
+                jq -R -s '[{ "timestamp": '$(date +%s000)', "message": . }]' < e2e_tests_output.txt > e2e_tests_log.json
+              
 
             - name: Upload results to cloudwatch
               env:
@@ -87,9 +88,9 @@ jobs:
                 aws logs create-log-stream --log-group-name /github/actions/tests --log-stream-name unit_tests
                 aws logs create-log-stream --log-group-name /github/actions/tests --log-stream-name integration_tests
                 aws logs create-log-stream --log-group-name /github/actions/tests --log-stream-name e2e_tests
-                aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name unit_tests --log-events file://unit_tests_output.txt
-                aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name integration_tests --log-events file://integration_tests_output.txt
-                aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name e2e_tests --log-events file://e2e_tests_output.txt
+                aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name unit_tests --log-events file://unit_tests_log.json
+                aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name integration_tests --log-events file://integration_tests_log.json
+                aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name e2e_tests --log-events file://e2e_tests_log.json
 
 
 

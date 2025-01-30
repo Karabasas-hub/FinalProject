@@ -7,7 +7,7 @@ BASE_URL = os.getenv("BASE_URL")
 def test_delete_task():
     
     task_data = {
-        "name": "Delete test task",
+        "name": "Delete test task from Integrate3",
         "status": "pending",
         "due_date": "2025-03-02"
     }
