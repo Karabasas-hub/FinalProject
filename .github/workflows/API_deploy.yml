@@ -63,3 +63,8 @@ jobs:
                 AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                 AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                 AWS_REGION: eu-central-1
+
+            - name: SSH into VM to check deployment success
+              run: |
+                VM_IP_DASHED=$(echo ${{ github.event.inputs.vm_ip }} | tr '.' '-')
+                ssh -i ${{ secrets.AWS_SSH_KEY }} ubuntu@ec2-${VM_IP_DASHED}.eu-central-1.compute.amazon.com "docker ps"
