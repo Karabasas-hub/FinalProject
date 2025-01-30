@@ -19,6 +19,15 @@ on:
                 description: 'Space-separated e2e test NAMES(no extension) to run'
                 required: true
                 default: 'e2e_test_1 e2e_test_2'
+            log_action:
+              description: 'Choose action for Cloudwatch log group'
+              required: true
+              type: choice
+              options:
+                - 'create'
+                - 'keep'
+                - 'delete'
+              default: 'keep'
 jobs:
     run-tests:
         runs-on: ubuntu-latest
@@ -77,6 +86,19 @@ jobs:
                 jq -R -s '[{ "timestamp": '$(date +%s000)', "message": . }]' < integration_tests_output.txt > integration_tests_log.json
                 jq -R -s '[{ "timestamp": '$(date +%s000)', "message": . }]' < e2e_tests_output.txt > e2e_tests_log.json
               
+            - name: Manage Cloudwatch log groups and streams
+              run: |
+                if [[ "${{ github.event.inputs.log_action }}" == "create" ]]; then
+                  # Check if the log group exists and delete it if necessary
+                  LOG_GROUP_EXISTS=$(aws logs describe-log-groups --log-group-name-prefix "/github/actions/tests" --query "logGroups[?logGroupName=='/github/actions/tests']" --output text)
+                  if [[ "$LOG_GROUP_EISTS" != "" ]]; then
+                  echo "Log group exists. Deleting"
+                  aws logs delete-log-group --log-group-name /github/actions/tests
+                fi
+
+                if [[ "${{ github.event.inputs.log_action }}" == "keep" ]]; then
+                  echo "Log group is created and healthy. Adding logs.."
+                fi
 
             - name: Upload results to cloudwatch
               env:
@@ -88,9 +110,16 @@ jobs:
                 aws logs create-log-stream --log-group-name /github/actions/tests --log-stream-name unit_tests
                 aws logs create-log-stream --log-group-name /github/actions/tests --log-stream-name integration_tests
                 aws logs create-log-stream --log-group-name /github/actions/tests --log-stream-name e2e_tests
+
                 aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name unit_tests --log-events file://unit_tests_log.json
                 aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name integration_tests --log-events file://integration_tests_log.json
                 aws logs put-log-events --log-group-name /github/actions/tests --log-stream-name e2e_tests --log-events file://e2e_tests_log.json
+
+            - name: Delete Cloudwatch resources if so selected
+              run: |
+                echo "Deleting all Cloudwatch resources"
+                aws logs delete-log-group --log-group-name /github/actions/tests
+                echo "Cloudwatch resources deleted, skipping tests"
 
 
 
