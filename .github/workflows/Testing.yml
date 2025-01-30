@@ -39,7 +39,7 @@ jobs:
                 pip install -r requirements.txt
 
             - name: Set BASE_URL environment variable
-              run: echo "BASE_URL=http://${{ github.event.inputs.vm_ip }}:5000/tasks" >> $GITHUB_ENV
+              run: echo "BASE_URL=http://${{ github.event.inputs.vm_ip }}:5000" >> $GITHUB_ENV
 
             - name: Run unit tests
               run: |
