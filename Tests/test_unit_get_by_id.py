@@ -48,4 +48,4 @@ def test_get_by_id(client):
             task = response_data.get('task', {})
             assert task.get('name') == "Test task"
             assert task.get('status') == "testing"
-            assert task.get('due_date') == "2025-01-31T00:00:00"
+            assert task.get('due_date') == "2025-01-31"
