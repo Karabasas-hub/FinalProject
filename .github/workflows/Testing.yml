@@ -76,16 +76,18 @@ jobs:
               
             - name: Manage CloudWatch log groups and streams
               if: ${{ github.event.inputs.log_action == 'create' || github.event.inputs.log_action == 'keep' }}
+              env:
+                AWS_REGION: eu-central-1
               run: |
                 if [[ "${{ github.event.inputs.log_action }}" == "create" ]]; then
                   # Check if the log group exists and delete it if necessary
                   LOG_GROUP_EXISTS=$(aws logs describe-log-groups --log-group-name-prefix "/github/actions/tests" --query "logGroups[?logGroupName=='/github/actions/tests']" --output text)
                   if [[ "$LOG_GROUP_EXISTS" != "" ]]; then
                     echo "Log group exists, deleting it..."
-                    aws logs delete-log-group --log-group-name /github/actions/tests
+                    aws logs delete-log-group --region $AWS_REGION --log-group-name /github/actions/tests
                   fi
                   echo "Creating new log group and streams..."
-                  aws logs create-log-group --log-group-name /github/actions/tests
+                  aws logs create-log-group --region $AWS_REGION --log-group-name /github/actions/tests
                 fi
 
                 if [[ "${{ github.event.inputs.log_action }}" == "keep" ]]; then
@@ -112,7 +114,7 @@ jobs:
               if: ${{ github.event.inputs.log_action == 'delete' }}
               run: |
                 echo "Deleting cloudwatch resources"
-                aws logs delete-log-group --log-group-name /github/actions/tests
+                aws logs delete-log-group --region $AWS_REGION--log-group-name /github/actions/tests
                 echo "Cloudwatch resources deleted, test logs not collected"
 
 
