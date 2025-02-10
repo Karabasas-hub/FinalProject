@@ -103,7 +103,7 @@ jobs:
                   aws logs put-log-events --log-group-name ApplicationTests --log-stream-name e2e_tests --log-events file://e2e_tests_log.json
                 fi
 
-                if [[ "${{ github.ecent.inputs.log_action }}" == "delete" ]]; then
+                if [[ "${{ github.event.inputs.log_action }}" == "delete" ]]; then
                   echo "Deleting log groups and streams, not using generated logs.."
                   aws logs delete-log-group --log-group-name ApplicationTests
                   echo "Log group deletion completed"
