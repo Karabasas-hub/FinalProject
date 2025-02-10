@@ -1,12 +1,12 @@
-- name: Prep VM for Docker
+- name: Prepare VM for Docker
   hosts: all
   become: true
   tasks:
-    # atnaujinam repozitoriją ir cache
+ 
     - name: Update apt repository and cache
       apt:
         update_cache: yes
-    # instaliuojam reikalingus paketus
+    
     - name: Install required packages
       apt:
         name:
@@ -15,17 +15,17 @@
           - curl
           - software-properties-common
         state: present
-    # prided GPG raktą dockeriui
+    
     - name: Add docker GPG key
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
-    # pridedam dockerio repository, kad turėtume paketų menedžerį
+    
     - name: Add Docker repository
       apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
         state: present
-    # instaliuojam dockerį
+    
     - name: Install Docker
       apt:
         name:
@@ -33,42 +33,42 @@
           - docker-ce-cli
           - containerd.io
         state: present
-    # sukuriam juzerį
+    
     - name: Adding user to docker group
       user:
         name: ubuntu
         groups: docker
         append: yes
-    # įsitikinam, kad dockeris veikia
+    
     - name: Ensure docker service is running
       service:
         name: docker
         state: started
         enabled: true
-    # įsitikinam, kad juzeris buvo pridėtas į docker grupę
+    
     - name: Print logout message
       debug:
         msg: >
           The user "{{ ansible_user }}" has been added to the 'docker' group. Please log out and log back in for this change to take effect.
 
-    # patikrinam dockerio instaliaciją
+    
     - name: Verify docker installation
       shell: docker --version
       register: docker_version
       ignore_errors: yes
       args:
         executable: /bin/bash
-    # patikrinam ar dockeris susiinstaliavo teisingai
+    
     - name: Check docker installation success
       fail:
         msg: "Docker installation failed. Please check the logs and try again."
       when: docker_version.rc != 0
-    # išsivedam suinstaliuoto dockerio versiją
+    
     - name: Print out docker version
       debug:
         msg: "Docker installed successfully. {{docker_version.stdout }}"
 
-    - name: Perduodam AWS kredencialus konteineriams
+    - name: Passing AWS credentials to the container
       lineinfile:
         path: /etc/environment
         regexp: '^AWS_'
@@ -80,5 +80,5 @@
         - "AWS_SECRET_ACCESS_KEY={{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
         - "AWS_REGION={{ lookup('env', 'AWS_REGION') }}"
 
-    - name: Paleidžiam source komandą
+    - name: Launching source command
       shell: . /etc/environment
