@@ -73,34 +73,34 @@ jobs:
             - name: Delete S3 bucket and DynamoDB table (if destroy)
               if: ${{ github.event.inputs.action == 'destroy' }}
               run: |
-                # Trinam viską iš kibiro pt1
-                aws s3api list-object-versions --bucket mock-tfstate-bucket --query "Versions[].{Key:Key,VersionId:VersionId}" --output json > delete-versions.json
+                # Deleting all verison data from the bucket
+                aws s3api list-object-versions --bucket tfstate-bucket-final --query "Versions[].{Key:Key,VersionId:VersionId}" --output json > delete-versions.json
                 if [ -s delete-versions.json ] && [ "$(cat delete-versions.json)" != "null" ]; then
                     for version in $(cat delete-versions.json | jq -c '.[]'); do
                       key=$(echo $version | jq -r '.Key')
                       versionId=$(echo $version | jq -r '.VersionId')
-                      aws s3api delete-object --bucket mock-tfstate-bucket --key "$key" --version-id "$versionId"
+                      aws s3api delete-object --bucket tfstate-bucket-final --key "$key" --version-id "$versionId"
                     done
                 fi
 
-                # Trinam viską iš kibiro pt2
-                aws s3api list-object-versions --bucket mock-tfstate-bucket --query "DeleteMarkers[].{Key:Key,VersionId:VersionId}" --output json > delete-markers.json
+                # Deleting all marker data from the bucket
+                aws s3api list-object-versions --bucket tfstate-bucket-final --query "DeleteMarkers[].{Key:Key,VersionId:VersionId}" --output json > delete-markers.json
                 if [ -s delete-markers.json ] && [ "$(cat delete-markers.json)" != "null" ]; then
                     for marker in $(cat delete-markers.json | jq -c '.[]'); do
                       key=$(echo $marker | jq -r '.Key')
                       versionId=$(echo $marker | jq -r '.VersionId')
-                      aws s3api delete-object --bucket mock-tfstate-bucket --key "$key" --version-id "$versionId"
+                      aws s3api delete-object --bucket tfstate-bucket-final --key "$key" --version-id "$versionId"
                     done
                 fi
 
-                # Tikrinam ar kibiras tuščias
-                remaining_objects=$(aws s3api list-objects-v2 --bucket mock-tfstate-bucket --query "Contents[].Key" --output json)
+                # Checking to see if the bucket is completely empty
+                remaining_objects=$(aws s3api list-objects-v2 --bucket tfstate-bucket-final --query "Contents[].Key" --output json)
                 if [ "$remaining_objects" != "[]" ] && [ "$remaining_objects" != "null" ]; then
                   exit 1
                 fi
 
-                # Trinam kibirą
-                aws s3api delete-bucket --bucket mock-tfstate-bucket --region eu-central-1 || true
+                # Deleting the S3 bucket
+                aws s3api delete-bucket --bucket tfstate-bucket-final --region eu-central-1 || true
 
-                # Trinam lentelę
-                aws dynamodb delete-table --table-name mock-tfstate-lock || true
+                # Deleting the DynamoDB table
+                aws dynamodb delete-table --table-name tfstate-lock-final || true
