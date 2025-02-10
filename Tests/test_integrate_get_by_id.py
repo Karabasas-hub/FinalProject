@@ -19,7 +19,7 @@ def test_get_task():
     print(type(task_id))
     print(created_task)
 
-    retrieve_url = f'{BASE_URL}/{task_id}'
+    retrieve_url = f'{BASE_URL}/tasks/{task_id}'
     print(retrieve_url)
     response = requests.get(retrieve_url)
 
