@@ -22,11 +22,9 @@ def test_get_by_id(client):
             'due_date': '2025-01-31',
         }
         with mock.patch.object(table, 'get_item') as mock_get_item,\
-             mock.patch.object(table, 'put_item') as mock_put_item,
              mock.patch.object(table, 'scan') as mock_scan:
             
             mock_get_item.return_value = {'Item': mock_data}
-            mock_put_item.return_value = {}
             mock_scan.return_value = {'Items': [mock_data]}
 
             response = client.post('/tasks', json=mock_data)
