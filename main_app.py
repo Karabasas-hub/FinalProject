@@ -7,7 +7,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Inicijuojame DynamoDB client'ą
+# Initializing DynamoDB client
 dynamodb = boto3.resource(
     'dynamodb', 
     region_name='eu-central-1',   
@@ -15,7 +15,7 @@ dynamodb = boto3.resource(
 
 table = dynamodb.Table('Tasks')
 
-# Pasirašome funkciją paprastesniam tvarkymui datų
+# Function for handling of dates
 def easy_date(date_str):
     return datetime.strptime(date_str, "%Y-%m-%d").isoformat() if date_str else None
 
@@ -25,7 +25,7 @@ def validate_task_data(task_data):
         if field not in task_data:
             raise ValueError(f"Missing required field: {field}")
 
-# Tasko sukūrimo funkcija
+# Function to create a task
 @app.route('/tasks', methods=['POST'])
 def create_task():
     data = request.json
@@ -46,23 +46,17 @@ def create_task():
         "due_date": due_date,
         "created_at": datetime.utcnow().isoformat()
     }
-# 
-    # try:
-        # validate_task_data(data)
-    # except ValueError as e:
-        # return jsonify({"error": str(e)}), 400
-# 
     table.put_item(Item=new_task)
     return jsonify({"message": "Task created", "task": new_task}), 201
-# 
-# Funkcija parodyti visus esamus taskus
+
+# Function to view all created tasks
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
     search_query = request.args.get('search','')
     response = table.scan()
     tasks = response.get('Items', [])
 
-    # Filtruojami taskai, jei suvestas query
+    # Filtering of tasks
     if search_query:
         tasks = [
             task for task in tasks
@@ -71,6 +65,7 @@ def get_tasks():
         
     return jsonify({"tasks": tasks}), 200
 
+# Function to get task by unique ID
 @app.route('/tasks/<task_id>', methods=['GET'])
 def get_task(task_id):
     try:
@@ -85,10 +80,11 @@ def get_task(task_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Function to retrieve tasks by status
 @app.route('/tasks/status/<status>', methods=['GET'])
 def get_tasks_by_status(status):
     try:
-        # Query su filtru/sąlyga
+        # Query with a filter/condition
         response = table.scan(
             FilterExpression=Attr('status').eq(status)
         )
@@ -98,10 +94,11 @@ def get_tasks_by_status(status):
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+# Function to retrieve overdue tasks
 @app.route('/tasks/overdue', methods=['GET'])
 def get_overdue_tasks():
-    # Nuskenuojamas dabartinis laikas palyginimui su tasko pabaigimo laiku
+    # Getting the current time to compare with the due date of the task
     try:
         now = datetime.utcnow().isoformat()
         response = table.scan(
@@ -115,7 +112,7 @@ def get_overdue_tasks():
         return jsonify({'error': str(e)}), 500
 
 
-# Funkcija, skirta atnaujinti taską
+# Function to update a task
 @app.route('/tasks/<task_id>', methods=['PUT'])
 def update_task(task_id):
     data = request.json
@@ -143,7 +140,7 @@ def update_task(task_id):
     )
     return jsonify({"message": "Task updated"}), 200
 
-# Funkcija ištrinti taskui
+# Function to delete a task by ID
 @app.route('/tasks/<task_id>', methods=['DELETE'])
 def delete_task(task_id):
     try:
