@@ -7,7 +7,7 @@ def test_delete_task():
 
     create_response = requests.post(f"{BASE_URL}/tasks", json={
         "name": "Task to update",
-        "status": "still fucking pending from E2E2",
+        "status": "still pending from E2E2",
         "due_date": "2025-02-01"
     })
 
