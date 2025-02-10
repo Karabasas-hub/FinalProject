@@ -11,7 +11,7 @@ def test_get_task():
         "due_date": "2025-03-01"
     }
 
-    create_response = requests.post(BASE_URL, json=task_data)
+    create_response = requests.post(f"{BASE_URL}/tasks", json=task_data)
     assert create_response.status_code == 201
 
     created_task = create_response.json()["task"]
