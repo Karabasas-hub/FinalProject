@@ -19,7 +19,7 @@ def test_delete_task():
     task_id = created_task["id"]
     print(task_id)
 
-    delete_url = f"{BASE_URL}/{task_id}"
+    delete_url = f"{BASE_URL}/tasks/{task_id}"
     print(delete_url)
     response = requests.delete(delete_url)
 
