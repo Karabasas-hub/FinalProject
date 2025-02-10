@@ -77,7 +77,9 @@ jobs:
             - name: Manage CloudWatch log groups and streams
               if: ${{ github.event.inputs.log_action == 'create' || github.event.inputs.log_action == 'keep' }}
               env:
-                AWS_REGION: 'eu-central-1'
+                AWS_REGION: ${{ secrets.AWS_REGION }}
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
               run: |
                 if [[ "${{ github.event.inputs.log_action }}" == "create" ]]; then
                   # Check if the log group exists and delete it if necessary
