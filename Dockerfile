@@ -1,20 +1,20 @@
-# Pasirnekamas lengvas pythono image
+# Selecting a lightweight Python image
 FROM python:3.10-slim
 
-# Nustatoma darbinė direktorija konteineryje
+# Stating the working directory inside the container
 WORKDIR /app
 
-# Nukopijuojamas requirements failas
+# Copying the requirements file into the container
 COPY requirements.txt /app/
 
-# Instaliuojam reikalingus dalykus, nurodytus requirements.txt
+# Installing dependencies listed in the requirements file
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Nukopijuojam pačios aplikacijos kodą į konteinerį
+# Copying the application code into the container
 COPY . /app/
 
-# Atidarom portą, reikalingą API darbui
+# Exposing the port required for communication with the database
 EXPOSE 5000
 
-# Nustatom kokia komanda paleis appsą
+# Stating the command that will launch the app
 CMD ["python", "main_app.py"]
