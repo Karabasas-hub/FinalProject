@@ -55,6 +55,7 @@ jobs:
                 if [ "${{ github.event.inputs.action }}" == "plan/apply" ]; then
                   terraform plan;
                   terraform apply -auto-approve;
+                  terraform output instance_ip;
                 elif [ "${{ github.event.inputs.action }}" == "destroy" ]; then
                   terraform destroy -auto-approve;
                 else
