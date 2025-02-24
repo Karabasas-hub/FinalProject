@@ -3,14 +3,6 @@ name: Terraform plan / apply / destroy
 on:
     workflow_dispatch:
         inputs:
-            environment:
-                type: choice
-                description: Environment
-                options:
-                    - dev
-                    - test
-                    - prod
-                default: test
             action:
                 description: Choose plan/apply or destroy
                 required: true
@@ -61,10 +53,10 @@ jobs:
                 AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
               run: |
                 if [ "${{ github.event.inputs.action }}" == "plan/apply" ]; then
-                  terraform plan -var-file=${{ github.event.inputs.environment }}.tfvars;
-                  terraform apply -auto-approve -var-file=${{ github.event.inputs.environment }}.tfvars;
+                  terraform plan;
+                  terraform apply -auto-approve;
                 elif [ "${{ github.event.inputs.action }}" == "destroy" ]; then
-                  terraform destroy -auto-approve -var-file=${{ github.event.inputs.environment }}.tfvars;
+                  terraform destroy -auto-approve;
                 else
                   echo "Invalid action: ${{ github.event.inputs.action }}";
                   exit 1;
