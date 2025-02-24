@@ -1,4 +1,4 @@
-name: Terraform plan / apply / destroy
+name: Infrastructure Build/Destroy
 
 on:
     workflow_dispatch:
