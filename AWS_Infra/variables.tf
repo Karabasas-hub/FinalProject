@@ -7,7 +7,7 @@ variable "instance_type" {
 variable "environment" {
     description = "Name of environment"
     type        = string
-    default     = "dev"
+    default     = "test"
 }
 
 variable "key_name" {
