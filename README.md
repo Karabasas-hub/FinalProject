@@ -12,4 +12,4 @@ The API application is built and launched inside a Docker container inside the V
 
 Once that is set-up - the testing pipeline can be launched with a custom selection of tests.
 
-For further information - refer to the documentation:
+For further information - refer to the documentation: "Testing pipeline documentation.pdf"
