@@ -1,4 +1,4 @@
-name: Setup DOcker on VM with Ansible
+name: Setup Docker on VM with Ansible
 
 on:
     workflow_dispatch:
